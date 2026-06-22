@@ -4,5 +4,5 @@ pymongo==4.7.0
 kafka-python==2.1.0
 scikit-learn==1.4.0
 pandas==2.2.0
-numpy==2.2.4
+numpy==1.26.4
 joblib>=1.4.0,<1.6
