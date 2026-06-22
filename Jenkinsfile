@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     DOCKER_HUB_CREDS = credentials('docker-hub-creds')
-    DOCKER_HUB_REPO = "rishiapp/flask-ml-backend"
+    DOCKER_HUB_REPO = "rishi1raj/flask-ml-backend"
     IMAGE_TAG = "${env.BUILD_ID}"
     ARGOCD_SERVER = "argocd-server.argocd.svc.cluster.local:443"
     ARGOCD_CREDS = credentials('argocd-creds')
