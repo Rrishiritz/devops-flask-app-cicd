@@ -16,11 +16,13 @@ spec:
     spec:
       containers:
         - name: zookeeper
-          image: wurstmeister/zookeeper:3.6.3
+          image: confluentinc/cp-zookeeper:7.4.0
           ports:
             - containerPort: 2181
           env:
             - name: ZOO_MY_ID
               value: "1"
-            - name: ZOO_SERVERS
-              value: "server.1=zookeeper:2888:3888"
+            - name: ZOOKEEPER_CLIENT_PORT
+              value: "2181"
+            - name: ZOOKEEPER_SERVER_ID
+              value: "1"

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: kafka
-          image: wurstmeister/kafka:2.13-2.8.0
+          image: confluentinc/cp-kafka:7.4.0
           ports:
             - containerPort: 9092
           env:
@@ -26,3 +26,5 @@ spec:
               value: "PLAINTEXT://kafka:9092"
             - name: KAFKA_LISTENERS
               value: "PLAINTEXT://0.0.0.0:9092"
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
