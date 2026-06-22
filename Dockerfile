@@ -1,11 +1,9 @@
 FROM jenkins/jenkins:lts
 
-# Use root to install extra tools if needed, then switch back to jenkins user.
 USER root
+RUN apt-get update && \
+  apt-get install -y docker.io bash && \
+  groupadd -f docker && \
+  usermod -aG docker jenkins
 
-# Example: install git if needed
-# RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-
-USER jenkins
-
-# Default Jenkins home is /var/jenkins_home and will be persisted by Docker Compose.
+#USER jenkins
