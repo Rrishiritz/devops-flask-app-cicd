@@ -36,7 +36,7 @@ From `d:\cicd`:
 git init
 git add .
 git commit -m "Initial Flask ML backend with Jenkins + Argo CD"
-git remote add origin https://github.com/<your-org>/<your-repo>.git
+git remote add origin https://github.com/Rrishiritz/devops-flask-app-cicd.git
 git push -u origin main
 ```
 

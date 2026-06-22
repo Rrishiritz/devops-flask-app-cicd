@@ -1,4 +1,4 @@
 image:
-  repository: <your-dockerhub-username>/rishiapp
+  repository: rishiapp/flask-ml-backend
   tag: latest
   pullPolicy: Always

@@ -4,7 +4,7 @@ pipeline {
   environment {
     DOCKER_HUB_USERNAME = credentials('docker-hub-username')
     DOCKER_HUB_PASSWORD = credentials('docker-hub-password')
-    DOCKER_HUB_REPO = "your-dockerhub-username/rishiapp"
+    DOCKER_HUB_REPO = "rishiapp/flask-ml-backend"
     IMAGE_TAG = "${env.BUILD_ID}"
     ARGOCD_SERVER = "argocd-server.argocd.svc.cluster.local:443"
     ARGOCD_USERNAME = "admin"
