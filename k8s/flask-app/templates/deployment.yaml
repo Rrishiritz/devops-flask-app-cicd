@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "flask-ml-backend.fullname" . }}
+  labels:
+    app: {{ include "flask-ml-backend.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "flask-ml-backend.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "flask-ml-backend.name" . }}
+    spec:
+      containers:
+        - name: flask-ml-backend
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REDIS_HOST
+              value: "{{ .Values.env.redisHost }}"
+            - name: MONGO_HOST
+              value: "{{ .Values.env.mongoHost }}"
+            - name: KAFKA_HOST
+              value: "{{ .Values.env.kafkaHost }}"
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}

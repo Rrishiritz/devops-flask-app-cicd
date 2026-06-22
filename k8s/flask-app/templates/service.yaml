@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "flask-ml-backend.fullname" . }}
+  labels:
+    app: {{ include "flask-ml-backend.name" . }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ include "flask-ml-backend.name" . }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 5000
+      protocol: TCP
+      name: http

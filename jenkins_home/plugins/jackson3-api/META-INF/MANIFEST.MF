@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Created-By: Maven Archiver 3.6.6
+Java-Version: 17
+Build-Jdk-Spec: 21
+Specification-Title: Jackson 3 API Plugin
+Specification-Version: 3.2
+Implementation-Title: Jackson 3 API Plugin
+Implementation-Version: 3.2.0-83.vfb_04cee1ea_0f
+Group-Id: io.jenkins.plugins
+Artifact-Id: jackson3-api
+Short-Name: jackson3-api
+Long-Name: Jackson 3 API Plugin
+Url: https://github.com/jenkinsci/jackson3-api-plugin
+Plugin-Version: 3.2.0-83.vfb_04cee1ea_0f
+Hudson-Version: 2.504.1
+Jenkins-Version: 2.504.1
+Plugin-Dependencies: jackson-annotations2-api:2.21-7.v4777a_f3a_a_d47,sn
+ akeyaml-engine-api:3.0.1-5.vd98ea_ff3b_92e,woodstox-core-api:7.1.1-1.v4
+ d297985f397
+Plugin-Developers: 
+Support-Dynamic-Loading: true
+Plugin-License-Name: The Apache Software License, Version 2.0
+Plugin-License-Url: https://www.apache.org/licenses/LICENSE-2.0.txt
+Plugin-ScmConnection: scm:git:https://github.com/jenkinsci/jackson3-api-
+ plugin
+Plugin-ScmTag: fb04cee1ea0f913b2d70df5a93deae7ba998b6ff
+Plugin-ScmUrl: https://github.com/jenkinsci/jackson3-api-plugin
+Implementation-Build: fb04cee1ea0f913b2d70df5a93deae7ba998b6ff
+

@@ -1,0 +1,36 @@
+Manifest-Version: 1.0
+Created-By: Maven Archiver 3.6.6
+Java-Version: 17
+Build-Jdk-Spec: 21
+Specification-Title: Email Extension Plugin
+Specification-Version: 0.0
+Implementation-Title: Email Extension Plugin
+Implementation-Version: 2038.v7b_8817a_499d9
+Plugin-Class: hudson.plugins.emailext.EmailExtensionPlugin
+Group-Id: org.jenkins-ci.plugins
+Artifact-Id: email-ext
+Short-Name: email-ext
+Long-Name: Email Extension Plugin
+Url: https://github.com/jenkinsci/email-ext-plugin
+Compatible-Since-Version: 2.57.2
+Plugin-Version: 2038.v7b_8817a_499d9
+Hudson-Version: 2.516.3
+Jenkins-Version: 2.516.3
+Plugin-Dependencies: commons-lang3-api:3.20.0-109.ve43756e2d2b_4,commons
+ -text-api:1.15.0-218.va_61573470393,jakarta-mail-api:2.1.5-1,workflow-j
+ ob:1571.vb_423c255d6d9;resolution:=optional,workflow-step-api:710.v3e45
+ 6cc85233;resolution:=optional,config-file-provider:1006.vc7366c201f57;r
+ esolution:=optional,credentials:1487.va_d001ede2c31,jackson2-api:2.21.1
+ -428.vf8dd988fa_d8d,jsoup:1.22.1-76.v9cdb_2456c0e3,junit:1369.v15da_002
+ 83f06,mailer:534.v1b_36f5864073,matrix-project:870.v9db_fcfc2f45b_;reso
+ lution:=optional,scm-api:728.vc30dcf7a_0df5,script-security:1399.ve6a_6
+ 6547f6e1,structs:362.va_b_695ef4fdf9,token-macro:477.vd4f0dc3cb_cf1
+Plugin-Developers: 
+Plugin-License-Name: The MIT License (MIT)
+Plugin-License-Url: https://opensource.org/licenses/MIT
+Plugin-ScmConnection: scm:git:https://github.com/jenkinsci/email-ext-plu
+ gin.git
+Plugin-ScmTag: 7b8817a499d9d0fbf016311ff9897485d8f7307c
+Plugin-ScmUrl: https://github.com/jenkinsci/email-ext-plugin
+Implementation-Build: 7b8817a499d9d0fbf016311ff9897485d8f7307c
+

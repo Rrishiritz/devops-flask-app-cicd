@@ -1,0 +1,21 @@
+image:
+  repository: rishiapp
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5000
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+env:
+  redisHost: redis
+  mongoHost: mongodb
+  kafkaHost: kafka

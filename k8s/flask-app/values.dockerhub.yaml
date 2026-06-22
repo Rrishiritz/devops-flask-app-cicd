@@ -1,0 +1,4 @@
+image:
+  repository: <your-dockerhub-username>/rishiapp
+  tag: latest
+  pullPolicy: Always
