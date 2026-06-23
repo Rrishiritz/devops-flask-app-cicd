@@ -1,0 +1,13 @@
+# Ignore Jenkins runtime data and caches
+jenkins_home/
+
+# Ignore temporary files
+tmp
+*.log
+
+# Ignore editor and OS files
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

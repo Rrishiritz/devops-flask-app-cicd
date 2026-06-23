@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: mongo:7.0-bullseye
+          image: mongo:6.0.12
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 27017
           volumeMounts:
