@@ -11,3 +11,4 @@ tmp
 *.swo
 .DS_Store
 Thumbs.db
+.kilo
