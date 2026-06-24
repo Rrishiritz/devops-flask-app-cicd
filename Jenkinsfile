@@ -34,13 +34,32 @@ pipeline {
       }
     }
 
-    stage('Sync Argo CD') {
-      steps {
+stage('Sync Argo CD') {
+    steps {
         sh '''
-          argocd login ${ARGOCD_SERVER} --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure
-          argocd app sync ${ARGOCD_APP}
+        # Wait for Argo CD to be reachable
+        for i in {1..10}; do
+            if curl -k --connect-timeout 10 https://host.docker.internal:30443 >/dev/null 2>&1; then
+                echo "Argo CD is reachable"
+                break
+            else
+                echo "Argo CD not reachable, retrying in 5 seconds..."
+                sleep 5
+            fi
+        done
+
+        # Login with retry
+        for i in {1..5}; do
+            argocd login ${ARGOCD_SERVER} --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure && break
+            echo "Login failed, retrying in 5 seconds..."
+            sleep 5
+        done
+
+        # Sync app
+        argocd app sync ${ARGOCD_APP}
         '''
-      }
+    }
+}
     }
   }
 
