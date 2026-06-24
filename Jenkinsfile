@@ -18,9 +18,7 @@ pipeline {
 
     stage('Build Docker image') {
       steps {
-        dir('flask-app') {
-          sh 'docker build -t ${DOCKER_HUB_REPO}:${IMAGE_TAG} .'
-        }
+        sh 'docker build -t ${DOCKER_HUB_REPO}:${IMAGE_TAG} .'
       }
     }
 
