@@ -5,7 +5,7 @@ pipeline {
     DOCKER_HUB_CREDS = credentials('docker-hub-creds')
     DOCKER_HUB_REPO = "rishi1raj/flask-ml-backend"
     IMAGE_TAG = "${env.BUILD_ID}"
-    ARGOCD_SERVER = "https://localhost:30443"
+    ARGOCD_SERVER = "host.docker.internal:30443"
     ARGOCD_CREDS = credentials('argocd-creds')
     ARGOCD_APP = "flask-app"
   }
