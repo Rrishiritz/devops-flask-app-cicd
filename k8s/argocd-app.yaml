@@ -22,3 +22,8 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+spec:
+  source:
+    helm:
+      valueFiles:
+        - values.dockerhub.yaml

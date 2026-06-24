@@ -1,5 +1,5 @@
 image:
-  repository: rishiapp
+  repository: rishi1raj/flask-ml-backend
   tag: latest
   pullPolicy: IfNotPresent
 
