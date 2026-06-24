@@ -49,12 +49,4 @@ pipeline {
       }
     }
   }
-
-  post {
-    always {
-      steps {
-        sh 'docker logout || true'
-      }
-    }
-  }
 }
