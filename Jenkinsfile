@@ -34,19 +34,13 @@ pipeline {
       }
     }
 
-stage('Sync Argo CD') {
-    steps {
-        sh 'curl -k --connect-timeout 10 http://host.docker.internal:30443'
+    stage('Sync Argo CD') {
+      steps {
         sh '''
-        for i in {1..5}; do
-            argocd login ${ARGOCD_SERVER} --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure && break
-            echo "Argo CD login failed, retrying in 5 seconds..."
-            sleep 5
-        done
+          argocd login ${ARGOCD_SERVER} --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure
+          argocd app sync ${ARGOCD_APP}
         '''
-        sh 'argocd app sync ${ARGOCD_APP}'
-    }
-}
+      }
     }
   }
 
