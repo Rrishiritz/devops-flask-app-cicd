@@ -5,9 +5,9 @@ pipeline {
     DOCKER_HUB_CREDS = credentials('docker-hub-creds')
     DOCKER_HUB_REPO  = "rishi1raj/flask-ml-backend"
     IMAGE_TAG        = "${env.BUILD_ID}"
-    ARGOCD_SERVER    = "host.docker.internal:30443"
-    ARGOCD_CREDS     = credentials('argocd-creds')
-    ARGOCD_APP       = "flask-app"
+    GIT_CREDS        = credentials('github-creds')   // Jenkins credential with GitHub username/password or token
+    GIT_REPO         = "https://github.com/Rrishiritz/devops-flask-app-cicd.git"
+    VALUES_FILE      = "k8s/flask-app/values.dockerhub.yaml"
   }
 
   stages {
@@ -28,42 +28,25 @@ pipeline {
     stage('Push Docker image') {
       steps {
         sh '''
-          set -euo pipefail
           echo "$DOCKER_HUB_CREDS_PSW" | docker login -u "$DOCKER_HUB_CREDS_USR" --password-stdin
           docker push ${DOCKER_HUB_REPO}:${IMAGE_TAG}
         '''
       }
     }
 
-    stage('Sync Argo CD') {
+    stage('Update GitHub values file') {
       steps {
         sh '''
           set -euo pipefail
-          ARGO_HOST=${ARGOCD_SERVER}
+          # update the image tag in values.dockerhub.yaml
+          sed -i "s|tag:.*|tag: ${IMAGE_TAG}|g" ${VALUES_FILE}
 
-          # wait for Argo CD health
-          for i in $(seq 1 20); do
-            if curl -k --connect-timeout 10 https://${ARGO_HOST}/healthz >/dev/null 2>&1; then
-              echo "Argo CD reachable"
-              break
-            fi
-            echo "waiting for Argo CD... ($i/20)"
-            sleep 5
-          done
+          git config --global user.email "jenkins@ci.local"
+          git config --global user.name "Jenkins CI"
 
-          # login with retries using grpc-web
-          for i in $(seq 1 8); do
-            echo "argocd login attempt $i"
-            if argocd login ${ARGO_HOST} --grpc-web --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure --loglevel debug; then
-              echo "argocd login succeeded"
-              break
-            fi
-            echo "login failed, retrying..."
-            sleep 5
-          done
-
-          # sync app explicitly with server and grpc-web
-          argocd app sync ${ARGOCD_APP} --server ${ARGO_HOST} --grpc-web --insecure
+          git add ${VALUES_FILE}
+          git commit -m "Update image tag to ${IMAGE_TAG}"
+          git push https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@github.com/Rrishiritz/devops-flask-app-cicd.git HEAD:main
         '''
       }
     }

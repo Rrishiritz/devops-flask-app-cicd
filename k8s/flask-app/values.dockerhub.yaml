@@ -1,4 +1,4 @@
 image:
-  repository: rishiapp/flask-ml-backend
+  repository: rishi1raj/flask-ml-backend
   tag: latest
   pullPolicy: Always
