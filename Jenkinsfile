@@ -3,11 +3,11 @@ pipeline {
 
   environment {
     DOCKER_HUB_CREDS = credentials('docker-hub-creds')
-    DOCKER_HUB_REPO = "rishi1raj/flask-ml-backend"
-    IMAGE_TAG = "${env.BUILD_ID}"
-    ARGOCD_SERVER = "localhost:30443"
-    ARGOCD_CREDS = credentials('argocd-creds')
-    ARGOCD_APP = "flask-app"
+    DOCKER_HUB_REPO  = "rishi1raj/flask-ml-backend"
+    IMAGE_TAG        = "${env.BUILD_ID}"
+    ARGOCD_SERVER    = "host.docker.internal:30443"
+    ARGOCD_CREDS     = credentials('argocd-creds')
+    ARGOCD_APP       = "flask-app"
   }
 
   stages {
@@ -28,49 +28,50 @@ pipeline {
     stage('Push Docker image') {
       steps {
         sh '''
+          set -euo pipefail
           echo "$DOCKER_HUB_CREDS_PSW" | docker login -u "$DOCKER_HUB_CREDS_USR" --password-stdin
           docker push ${DOCKER_HUB_REPO}:${IMAGE_TAG}
         '''
       }
     }
 
-stage('Sync Argo CD') {
-    steps {
+    stage('Sync Argo CD') {
+      steps {
         sh '''
-        # Wait for Argo CD to be reachable
-        for i in {1..20}; do
-            if curl -k --connect-timeout 30 https://host.docker.internal:30443 >/dev/null 2>&1; then
-                echo "Argo CD is reachable"
-                break
-            else
-                echo "Argo CD not reachable, retrying in 5 seconds..."
-                sleep 5
-            fi
-        done
+          set -euo pipefail
+          ARGO_HOST=${ARGOCD_SERVER}
 
-        # Login with retry
-        for i in {1..10}; do
-            argocd login ${ARGOCD_SERVER} --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure
-            if [ $? -eq 0 ]; then
-                echo "Login successful"
-                break
-            else
-                echo "Login failed, retrying in 5 seconds..."
-                sleep 5
+          # wait for Argo CD health
+          for i in $(seq 1 20); do
+            if curl -k --connect-timeout 10 https://${ARGO_HOST}/healthz >/dev/null 2>&1; then
+              echo "Argo CD reachable"
+              break
             fi
-        done
+            echo "waiting for Argo CD... ($i/20)"
+            sleep 5
+          done
 
-        # Sync app
-        argocd app sync ${ARGOCD_APP}
+          # login with retries using grpc-web
+          for i in $(seq 1 8); do
+            echo "argocd login attempt $i"
+            if argocd login ${ARGO_HOST} --grpc-web --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure --loglevel debug; then
+              echo "argocd login succeeded"
+              break
+            fi
+            echo "login failed, retrying..."
+            sleep 5
+          done
+
+          # sync app explicitly with server and grpc-web
+          argocd app sync ${ARGOCD_APP} --server ${ARGO_HOST} --grpc-web --insecure
         '''
-    }
-}
+      }
     }
   }
 
   post {
     always {
-      sh 'docker logout'
+      sh 'docker logout || true'
     }
   }
 }

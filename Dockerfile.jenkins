@@ -1,0 +1,25 @@
+# File: Dockerfile.jenkins
+FROM jenkins/jenkins:lts
+
+USER root
+
+# Install curl, bash, docker CLI
+RUN apt-get update && \
+  apt-get install -y curl bash docker.io && \
+  groupadd -f docker && \
+  usermod -aG docker jenkins
+
+# Install kubectl (stable release)
+RUN KUBECTL_VER=$(curl -L -s https://dl.k8s.io/release/stable.txt) && \
+  curl -fsSL "https://dl.k8s.io/release/${KUBECTL_VER}/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl && \
+  chmod +x /usr/local/bin/kubectl
+
+# Install argocd CLI
+RUN curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 && \
+  chmod +x /usr/local/bin/argocd
+
+# Prepare kube directory
+RUN mkdir -p /var/jenkins_home/.kube && chown -R jenkins:jenkins /var/jenkins_home
+
+USER jenkins
+# Do not override ENTRYPOINT — use base image defaults
