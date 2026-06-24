@@ -39,7 +39,7 @@ pipeline {
         sh '''
           # Wait for Argo CD to be reachable
           for i in {1..10}; do
-              if curl -k --connect-timeout 10 https://${ARGOCD_SERVER}/healthz >/dev/null 2>&1; then
+              if curl -k --connect-timeout 10 http://${ARGOCD_SERVER}/healthz >/dev/null 2>&1; then
                   echo "Argo CD is reachable"
                   break
               else
