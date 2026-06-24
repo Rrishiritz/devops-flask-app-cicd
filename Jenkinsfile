@@ -5,7 +5,7 @@ pipeline {
     DOCKER_HUB_CREDS = credentials('docker-hub-creds')
     DOCKER_HUB_REPO  = "rishi1raj/flask-ml-backend"
     IMAGE_TAG        = "${env.BUILD_ID}"
-    GIT_CREDS        = credentials('github-creds')
+    GIT_CREDS        = credentials('GITHUB')
     GIT_REPO         = "https://github.com/Rrishiritz/devops-flask-app-cicd.git"
     VALUES_FILE1     = "k8s/flask-app/values.dockerhub.yaml"
     VALUES_FILE2     = "k8s/flask-app/values.yaml"
