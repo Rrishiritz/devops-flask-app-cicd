@@ -54,7 +54,7 @@ pipeline {
 
   post {
     always {
-      script {
+      steps {
         sh 'docker logout || true'
       }
     }
