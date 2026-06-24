@@ -17,6 +17,8 @@ spec:
       labels:
         app: {{ include "flask-ml-backend.name" . }}
     spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
       containers:
         - name: flask-ml-backend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
