@@ -5,7 +5,7 @@ pipeline {
     DOCKER_HUB_CREDS = credentials('docker-hub-creds')
     DOCKER_HUB_REPO  = "rishi1raj/flask-ml-backend"
     IMAGE_TAG        = "${env.BUILD_ID}"
-    GIT_CREDS        = credentials('github-creds')   // Jenkins credential with GitHub username/password or PAT
+    GIT_CREDS        = credentials('github-creds')
     GIT_REPO         = "https://github.com/Rrishiritz/devops-flask-app-cicd.git"
     VALUES_FILE1     = "k8s/flask-app/values.dockerhub.yaml"
     VALUES_FILE2     = "k8s/flask-app/values.yaml"
@@ -13,9 +13,7 @@ pipeline {
 
   stages {
     stage('Checkout') {
-      steps {
-        checkout scm
-      }
+      steps { checkout scm }
     }
 
     stage('Build Docker image') {
@@ -40,8 +38,6 @@ pipeline {
       steps {
         sh '''
           set -euo pipefail
-
-          # update both values files with new tag
           sed -i "s|tag:.*|tag: ${IMAGE_TAG}|g" ${VALUES_FILE1}
           sed -i "s|tag:.*|tag: ${IMAGE_TAG}|g" ${VALUES_FILE2}
 
@@ -58,7 +54,9 @@ pipeline {
 
   post {
     always {
-      sh 'docker logout || true'
+      script {
+        sh 'docker logout || true'
+      }
     }
   }
 }
