@@ -5,7 +5,7 @@ pipeline {
     DOCKER_HUB_CREDS = credentials('docker-hub-creds')
     DOCKER_HUB_REPO  = "rishi1raj/flask-ml-backend"
     IMAGE_TAG        = "${env.BUILD_ID}"
-    GIT_CREDS        = credentials('GITHUB')
+    GIT_CREDS        = credentials('github-creds')
     GIT_REPO         = "https://github.com/Rrishiritz/devops-flask-app-cicd.git"
     VALUES_FILE1     = "k8s/flask-app/values.dockerhub.yaml"
     VALUES_FILE2     = "k8s/flask-app/values.yaml"
@@ -18,7 +18,7 @@ pipeline {
 
     stage('Build Docker image') {
       steps {
-        sh 'docker build -t ${DOCKER_HUB_REPO}:${IMAGE_TAG} .'
+        sh 'docker build -t ${DOCKER_HUB_REPO}:${IMAGE_TAG} -f flask-app/Dockerfile flask-app'
       }
     }
 
@@ -46,6 +46,14 @@ pipeline {
           git commit -m "Update image tag to ${IMAGE_TAG}"
           git push https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@github.com/Rrishiritz/devops-flask-app-cicd.git HEAD:main
         '''
+      }
+    }
+  }
+
+  post {
+    always {
+      steps {
+        sh 'docker logout || true'
       }
     }
   }
