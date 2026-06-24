@@ -5,18 +5,13 @@ pipeline {
     DOCKER_HUB_CREDS = credentials('docker-hub-creds')
     DOCKER_HUB_REPO = "rishi1raj/flask-ml-backend"
     IMAGE_TAG = "${env.BUILD_ID}"
+    ARGOCD_SERVER = "host.docker.internal:30443"
     ARGOCD_CREDS = credentials('argocd-creds')
     ARGOCD_APP = "flask-app"
-    # Local port-forward target inside agent
-    ARGOCD_LOCAL = "127.0.0.1:8084"
-    # Path to kubeconfig inside agent (must be mounted into container)
-    KUBECONFIG = "/home/jenkins/.kube/config"
   }
 
   stages {
-    stage('Checkout') {
-      steps { checkout scm }
-    }
+    stage('Checkout') { steps { checkout scm } }
 
     stage('Build Docker image') {
       steps {
@@ -35,64 +30,29 @@ pipeline {
       }
     }
 
-    stage('Port-forward and Sync ArgoCD') {
+    stage('Sync Argo CD') {
       steps {
         sh '''
-          set -euo pipefail
-
-          # verify tools
-          command -v kubectl >/dev/null 2>&1 || { echo "kubectl not found"; exit 1; }
-          command -v argocd >/dev/null 2>&1 || { echo "argocd not found"; exit 1; }
-
-          export KUBECONFIG=${KUBECONFIG}
-
-          # start port-forward in background and capture pid
-          kubectl -n argocd port-forward svc/argocd-server 8084:443 >/tmp/argocd-pf.log 2>&1 &
-          PF_PID=$!
-          echo "started port-forward pid=$PF_PID"
-
-          # wait for local port to be ready
-          for i in $(seq 1 12); do
-            if nc -vz 127.0.0.1 8084 >/dev/null 2>&1; then
-              echo "local port 127.0.0.1:8084 is open"
-              break
-            fi
-            echo "waiting for local port-forward... ($i/12)"
-            sleep 2
+          for i in {1..20}; do
+            curl -k --connect-timeout 10 https://${ARGOCD_SERVER}/healthz >/dev/null 2>&1 && break
+            echo "waiting for argocd..."
+            sleep 5
           done
 
-          if ! nc -vz 127.0.0.1 8084 >/dev/null 2>&1; then
-            echo "port-forward did not bind; last 200 lines of log:"
-            tail -n 200 /tmp/argocd-pf.log || true
-            kill $PF_PID 2>/dev/null || true
-            exit 1
-          fi
-
-          # health check
-          curl -k --connect-timeout 5 https://127.0.0.1:8084/healthz
-
-          # login: try gRPC then grpc-web fallback
-          if argocd login ${ARGOCD_LOCAL} --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure --loglevel debug; then
-            echo "argocd login (gRPC) succeeded"
+          if argocd login ${ARGOCD_SERVER} --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure --loglevel debug; then
+            echo "gRPC login succeeded"
           else
-            echo "gRPC login failed; trying grpc-web"
-            argocd login ${ARGOCD_LOCAL} --grpc-web --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure --loglevel debug
+            echo "gRPC failed; trying grpc-web"
+            argocd login ${ARGOCD_SERVER} --grpc-web --username ${ARGOCD_CREDS_USR} --password ${ARGOCD_CREDS_PSW} --insecure --loglevel debug
           fi
 
-          # sync
           argocd app sync ${ARGOCD_APP}
-
-          # cleanup
-          kill $PF_PID || true
-          rm -f /tmp/argocd-pf.log || true
         '''
       }
     }
   }
 
   post {
-    always {
-      sh 'docker logout || true'
-    }
+    always { sh 'docker logout || true' }
   }
 }
