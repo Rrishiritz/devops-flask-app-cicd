@@ -18,4 +18,4 @@ resources:
 env:
   redisHost: redis
   mongoHost: mongodb
-  kafkaHost: kafka
+  #kafkaHost: kafka

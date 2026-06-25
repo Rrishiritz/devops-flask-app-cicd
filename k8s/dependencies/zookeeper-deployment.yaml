@@ -27,3 +27,14 @@ spec:
               value: "no"
             - name: ZOO_PORT_NUMBER
               value: "2181"
+          volumeMounts:
+            - name: zookeeper-data
+              mountPath: /var/lib/zookeeper
+            - name: zookeeper-config
+              mountPath: /etc/zookeeper
+      volumes:
+        - name: zookeeper-data
+          emptyDir: {}
+        - name: zookeeper-config
+          configMap:
+            name: zookeeper-config
